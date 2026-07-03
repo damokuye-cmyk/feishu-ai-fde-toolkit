@@ -2,24 +2,19 @@ version: "3.8"
 
 services:
   agent-api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    image: feishu-agent-platform:latest
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
       LITELLM_API_BASE: ${LITELLM_API_BASE:-http://ai-gateway:4000}
       LITELLM_API_KEY: ${LITELLM_MASTER_KEY:-sk-litellm-master-key-123456}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       DEFAULT_LLM_MODEL: ${DEFAULT_LLM_MODEL:-deepseek-chat}
       LOG_LEVEL: ${AGENT_LOG_LEVEL:-INFO}
-      REDIS_URL: redis://redis:6379/0
     depends_on:
-      redis:
-        condition: service_started
-    volumes:
-      - ./agents:/app/agents:ro
-      - ./config:/app/config:ro
+      - redis
 
   redis:
     image: redis:7-alpine
@@ -28,3 +23,11 @@ services:
       - "6379:6379"
     volumes:
       - agent-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  agent-redis-data:
