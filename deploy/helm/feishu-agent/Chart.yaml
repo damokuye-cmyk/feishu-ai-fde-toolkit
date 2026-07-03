@@ -1,0 +1,6 @@
+apiVersion: v2
+name: feishu-agent
+description: Feishu AI Agent Platform - Kubernetes 部署
+version: 1.0.0
+appVersion: "2.0.0"
+type: application

@@ -1,0 +1,316 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: feishu-agent
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: feishu-agent-secrets
+  namespace: feishu-agent
+type: Opaque
+stringData:
+  # 这里填入实际 Key
+  LITELLM_API_KEY: "sk-litellm-master-key-123456"
+  DEEPSEEK_API_KEY: ""
+  TAVILY_API_KEY: ""
+  DATABASE_URL: "postgresql://feishu:feishu123@feishu-postgres:5432/feishu"
+---
+# PostgreSQL StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: feishu-postgres
+  namespace: feishu-agent
+spec:
+  serviceName: feishu-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feishu-postgres
+  template:
+    metadata:
+      labels:
+        app: feishu-postgres
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "feishu"
+        - name: POSTGRES_USER
+          value: "feishu"
+        - name: POSTGRES_PASSWORD
+          value: "feishu123"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          readOnlyRootFilesystem: false
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: postgres-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: feishu-agent
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: "local-path"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feishu-postgres
+  namespace: feishu-agent
+spec:
+  selector:
+    app: feishu-postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+# Agent Platform Deployment (2 副本)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feishu-agent
+  namespace: feishu-agent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feishu-agent
+  template:
+    metadata:
+      labels:
+        app: feishu-agent
+    spec:
+      # 反亲和: 尽量分布在不同节点
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - feishu-agent
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: agent
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: LITELLM_API_BASE
+          value: "http://feishu-gateway:4000"
+        - name: LITELLM_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: feishu-agent-secrets
+              key: LITELLM_API_KEY
+        - name: DEEPSEEK_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: feishu-agent-secrets
+              key: DEEPSEEK_API_KEY
+        - name: TAVILY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: feishu-agent-secrets
+              key: TAVILY_API_KEY
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: feishu-agent-secrets
+              key: DATABASE_URL
+        - name: LOG_LEVEL
+          value: {{ .Values.agent.env.LOG_LEVEL }}
+        - name: DEFAULT_LLM_MODEL
+          value: {{ .Values.agent.env.DEFAULT_LLM_MODEL }}
+        - name: USE_REASONING
+          value: {{ .Values.agent.env.USE_REASONING }}
+        # Agent 配置 ConfigMap 挂载
+        volumeMounts:
+        - name: agent-config
+          mountPath: /app/config
+          readOnly: false
+        - name: tmp
+          mountPath: /tmp
+        resources:
+          requests:
+            cpu: {{ .Values.agent.resources.requests.cpu }}
+            memory: {{ .Values.agent.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.agent.resources.limits.cpu }}
+            memory: {{ .Values.agent.resources.limits.memory }}
+        # 安全上下文 (Pod Security Standards)
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: agent-config
+        configMap:
+          name: feishu-agent-config
+      - name: tmp
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feishu-agent
+  namespace: feishu-agent
+spec:
+  selector:
+    app: feishu-agent
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: feishu-agent-config
+  namespace: feishu-agent
+data:
+  agents.yaml: |
+    agents:
+      web-search:
+        name: "联网搜索助手"
+        description: "搜索互联网获取最新信息"
+        model: "deepseek-chat"
+        temperature: 0.7
+        max_tokens: 4096
+        enabled: true
+        max_search_rounds: 1
+        tavily_key: ""
+        tools:
+          - tavily_search
+        system_prompt: |
+          你是专业的联网搜索 AI 助手。
+          仅当需要实时信息时搜索，常识直接回答。
+---
+# Ingress (通过 Traefik)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: feishu-agent
+  namespace: feishu-agent
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+  - host: agent.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: feishu-agent
+            port:
+              number: 8000
+---
+# 网络策略
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: feishu-agent
+  namespace: feishu-agent
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: feishu-agent
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+---
+# Pod 安全策略 (PSP) for K3s < 1.25
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: feishu-agent
+  namespace: feishu-agent
+spec:
+  privileged: false
+  seLinux:
+    rule: RunAsAny
+  runAsUser:
+    rule: MustRunAsNonRoot
+  runAsGroup:
+    rule: MustRunAs
+    ranges:
+    - min: 1000
+      max: 65535
+  fsGroup:
+    rule: MustRunAs
+    ranges:
+    - min: 1000
+      max: 65535
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+  - ALL
+  volumes:
+  - configMap
+  - emptyDir
+  - persistentVolumeClaim
+  - secret

@@ -1,0 +1,76 @@
+# 🦞 Feishu Agent - Helm Values
+# 2 节点部署配置
+
+replicaCount: 2
+
+image:
+  repository: feishu-agent-platform
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# 安全配置 (Pod Security Standards)
+security:
+  runAsUser: 1000
+  runAsGroup: 1000
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+  seccompProfile:
+    type: RuntimeDefault
+
+# PostgreSQL (StatefulSet)
+postgresql:
+  enabled: true
+  storageSize: 10Gi
+  storageClass: "local-path"
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+
+# Agent Platform
+agent:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  env:
+    LOG_LEVEL: "INFO"
+    DEFAULT_LLM_MODEL: "deepseek-chat"
+    USE_REASONING: "true"
+  # API Keys - 通过 Secret 注入
+  existingSecret: "feishu-agent-secrets"
+
+# AI Gateway (LiteLLM) - 可选
+gateway:
+  enabled: true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+# Ingress
+ingress:
+  enabled: true
+  host: "agent.local"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+
+# 持久化
+persistence:
+  enabled: true
+  storageClass: "local-path"
+
+# 网络策略
+networkPolicy:
+  enabled: true

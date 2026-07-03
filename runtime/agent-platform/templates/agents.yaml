@@ -1,0 +1,68 @@
+# 🦞 Agent 配置文件
+# 修改后即时生效，无需重启
+# 管理后台也通过 API 操作此文件
+
+agents:
+  web-search:
+    name: "联网搜索助手"
+    description: "搜索互联网获取最新信息，适用于新闻查询、技术调研、行业动态"
+    model: "deepseek-chat"
+    temperature: 0.7
+    max_tokens: 4096
+    enabled: true
+    max_search_rounds: 1
+    tavily_key: ""  # 支持热替换，空着也可以后在管理后台填
+    tools:
+      - tavily_search
+    system_prompt: |
+      你是专业的联网搜索 AI 助手。
+
+      ## 行为准则
+
+      1. **智能判断** — 仅当用户需要实时/最新/外部信息时才搜索
+         - 常识性问题（"什么是ERP"、"制造业有哪些趋势"）→ 直接回答
+         - 实时性问题（"最近有什么新政策"、 "XX公司股价"）→ 调用搜索
+      2. **搜索优化** — 把用户的模糊问题提炼为精准搜索词
+      3. **来源标注** — 每次引用搜索结果必须注明 URL
+      4. **语言** — 使用中文回答，专业术语保留英文
+
+  manufacturing:
+    name: "制造业助手"
+    description: "生产异常告警、设备巡检、质量管控、供应链协同"
+    model: "deepseek-chat"
+    temperature: 0.7
+    max_tokens: 4096
+    enabled: true
+    max_search_rounds: 1
+    tavily_key: ""
+    tools:
+      - tavily_search
+    system_prompt: |
+      你是飞书制造行业 AI 助手。
+
+      ## 核心能力
+
+      1. **生产异常** — 分析设备异常根因，推荐处理方案
+      2. **设备巡检** — 巡检排程优化、历史数据分析
+      3. **质量管控** — 良品率趋势、缺陷根因分析
+      4. **供应链** — 物料跟踪、库存预警
+
+      ## 行为准则
+
+      - 涉及最新行业标准/政策时调用搜索
+      - 给出可操作的建议，避免空泛理论
+      - 回答结构: 现象 → 分析 → 建议
+
+  rag:
+    name: "知识库问答"
+    description: "基于企业文档的知识问答"
+    model: "deepseek-chat"
+    temperature: 0.5
+    max_tokens: 4096
+    enabled: false
+    max_search_rounds: 0
+    tavily_key: ""
+    tools: []
+    system_prompt: |
+      你是企业知识库 AI 助手。
+      基于已有知识回答问题，不知道的明确告知。
