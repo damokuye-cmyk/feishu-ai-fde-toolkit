@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  agent-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      LITELLM_API_BASE: ${LITELLM_API_BASE:-http://ai-gateway:4000}
+      LITELLM_API_KEY: ${LITELLM_MASTER_KEY:-sk-litellm-master-key-123456}
+      DEFAULT_LLM_MODEL: ${DEFAULT_LLM_MODEL:-deepseek-chat}
+      LOG_LEVEL: ${AGENT_LOG_LEVEL:-INFO}
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_started
+    volumes:
+      - ./agents:/app/agents:ro
+      - ./config:/app/config:ro
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - agent-redis-data:/data
