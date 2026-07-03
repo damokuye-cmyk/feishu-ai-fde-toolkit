@@ -7,6 +7,42 @@
 
 ## 一、甲方 vs 乙方：你的转型优势
 
+### 你的独特卖点：10 年甲方 + 6 年乙方
+
+大多数候选人是纯甲方或纯乙方。你是少有的「两边都干过」的人。
+
+```
+2009-2019   中国电信湖北           甲方  ★★★★★
+            企业信息化部·产品总监
+            (BSS/CRM/ERP/计费系统)
+            管 4 家厂商 60+ 人
+
+2019-2021   华为(数据分析)          混合  ★★★
+            数据挖掘/ML模型/5G
+
+2021-2026   华为云(沙特)           乙方  ★★★★★
+            高级解决方案架构师
+            AI Agent / 云迁移 / 金融架构
+```
+
+### 这个组合在面试中的杀伤力
+
+```
+面试官问: "你怎么管理供应商？"
+纯甲方的人: "我们定期 review SLA..."
+你: "我在电信管过 4 家厂商 60 人，知道他们怎么报工期、
+    怎么藏风险。后来我去华为云做了乙方，
+    现在我既知道供应商怎么想的，也知道怎么管他们。"
+                                  ↑ 这就是你的碾压点
+```
+
+### 你的叙事升级版
+
+```
+不是 "我从乙方转型去甲方"
+而是 "我两边都干过，知道怎么让两边高效合作"
+```
+
 ### 乙方出身 → 甲方受欢迎的原因
 
 ```
@@ -308,3 +344,60 @@ and digital transformation instead of being sold to by vendors."
 | SLA | Service outcomes |
 | Project delivery | Benefits realization |
 | Technical lead | Technology advisor |
+
+---
+
+## 附录二：实时岗位搜索方法
+
+由于招聘链接会过期，以下方法可查到最新岗位：
+
+### 香港甲方岗位搜索
+
+```
+LinkedIn 搜索关键词:
+  "Head of Cloud" + Hong Kong
+  "Enterprise Architect" + Hong Kong + bank
+  "VP Cloud Architecture" + Hong Kong
+  "Head of AI Platform" + Hong Kong
+  "Chief Architect" + Hong Kong
+  "Director, Technology" + Hong Kong
+
+JobsDB (香港最大招聘平台):
+  https://www.jobsdb.com/hk
+  搜索: cloud architect, enterprise architect, head of technology
+
+CTgoodjobs:
+  https://www.ctgoodjobs.hk/
+  搜索: 架构师, cloud, digital transformation
+
+猎头平台:
+  Robert Walters:  https://www.robertwalters.com.hk
+  Michael Page:    https://www.michaelpage.com.hk
+  Hays:           https://www.hays.com.hk
+```
+
+### 新加坡甲方岗位搜索
+
+```
+LinkedIn 搜:
+  "VP Cloud Architecture" + Singapore
+  "Enterprise Architect" + Singapore + bank
+  "Head of AI" + Singapore
+
+MyCareersFuture (新加坡政府平台):
+  https://www.mycareersfuture.gov.sg
+  
+JobsBank Singapore:
+  https://www.jobsbank.gov.sg
+```
+
+### 马来西亚甲方岗位搜索
+
+```
+LinkedIn 搜:
+  "Head of Cloud" + Malaysia
+  "Enterprise Architect" + Malaysia
+
+Hays Malaysia:  https://www.hays.com.my
+Michael Page:   https://www.michaelpage.com.my
+```
