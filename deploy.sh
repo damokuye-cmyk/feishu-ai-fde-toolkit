@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 🦞 Feishu AI FED Toolkit - 一键部署脚本
+# 🦞 Feishu AI FDE Toolkit - 一键部署脚本
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -90,7 +90,7 @@ health_check() {
 print_urls() {
     echo ""
     echo "=========================================="
-    echo -e "${GREEN}  🦞  Feishu AI FED Toolkit 已部署${NC}"
+    echo -e "${GREEN}  🦞  Feishu AI FDE Toolkit 已部署${NC}"
     echo "=========================================="
     echo ""
     echo "  AI Gateway (LiteLLM):  http://localhost:4000"
@@ -112,7 +112,7 @@ print_urls() {
 main() {
     echo ""
     echo -e "${GREEN}╔══════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║   🦞 Feishu AI FED Toolkit v1.0     ║${NC}"
+    echo -e "${GREEN}║   🦞 Feishu AI FDE Toolkit v1.0     ║${NC}"
     echo -e "${GREEN}║   飞书 AI 现场交付工具链             ║${NC}"
     echo -e "${GREEN}╚══════════════════════════════════════╝${NC}"
     echo ""

@@ -127,7 +127,7 @@ class FeishuPPT {
   _setup() {
     this.ppt.defineLayout({ name: 'WIDE', width: 13.33, height: 7.5 });
     this.ppt.layout = 'WIDE';
-    this.ppt.author = 'Feishu AI FED';
+    this.ppt.author = 'Feishu AI FDE';
     this.ppt.company = 'Feishu';
     this.ppt.subject = 'Feishu AI 解决方案';
   }

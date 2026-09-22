@@ -1,5 +1,5 @@
 #!/bin/bash
-# 🦞 Feishu AI FED Toolkit - 一键构建 & 打包
+# 🦞 Feishu AI FDE Toolkit - 一键构建 & 打包
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,7 +9,7 @@ BUILD_DATE=$(date +%Y%m%d_%H%M%S)
 PACKAGE_DIR="$SCRIPT_DIR/packages/build_$BUILD_DATE"
 
 echo "╔══════════════════════════════════════╗"
-echo "║   🦞 Feishu AI FED Toolkit Build    ║"
+echo "║   🦞 Feishu AI FDE Toolkit Build    ║"
 echo "╚══════════════════════════════════════╝"
 echo ""
 
@@ -92,15 +92,15 @@ EOF
 # 7. 打包
 echo "📦 打包..."
 cd packages
-tar czf "feishu-ai-fed-toolkit_$BUILD_DATE.tar.gz" "build_$BUILD_DATE"
+tar czf "feishu-ai-fde-toolkit_$BUILD_DATE.tar.gz" "build_$BUILD_DATE"
 cd ..
 
 echo ""
 echo "✅ 构建完成！"
-echo "   发布包: packages/feishu-ai-fed-toolkit_$BUILD_DATE.tar.gz"
-echo "   大小: $(du -h "packages/feishu-ai-fed-toolkit_$BUILD_DATE.tar.gz" | cut -f1)"
+echo "   发布包: packages/feishu-ai-fde-toolkit_$BUILD_DATE.tar.gz"
+echo "   大小: $(du -h "packages/feishu-ai-fde-toolkit_$BUILD_DATE.tar.gz" | cut -f1)"
 echo ""
 echo "   客户现场:"
-echo "     tar xzf feishu-ai-fed-toolkit_*.tar.gz"
+echo "     tar xzf feishu-ai-fde-toolkit_*.tar.gz"
 echo "     cd build_*/deploy/k3s/images"
 echo "     bash install-k3s-master.sh"

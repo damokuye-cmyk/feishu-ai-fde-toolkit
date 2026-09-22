@@ -1,4 +1,4 @@
-# 🦞 Feishu AI FED Toolkit - 现场交付操作手册
+# 🦞 Feishu AI FDE Toolkit - 现场交付操作手册
 
 > 版本: 2.0 | 最后更新: 2026-07-03
 > 作者: 黄龙 | 角色: 飞书解决方案专家（华南区）
@@ -46,13 +46,13 @@
 
 ```bash
 # 克隆最新代码
-git clone https://github.com/damokuye-cmyk/feishu-ai-fed-toolkit
-cd feishu-ai-fed-toolkit
+git clone https://github.com/damokuye-cmyk/feishu-ai-fde-toolkit
+cd feishu-ai-fde-toolkit
 
 # 构建所有镜像 + 打包
 bash build.sh
 
-# → 产物: packages/feishu-ai-fed-toolkit_日期.tar.gz
+# → 产物: packages/feishu-ai-fde-toolkit_日期.tar.gz
 # → 把这文件带走（U盘 / 网盘 / scp）
 ```
 
@@ -66,7 +66,7 @@ scp packages/*.tar.gz your-user@客户服务器IP:~/
 ssh your-user@客户服务器IP
 
 # 解压
-tar xzf feishu-ai-fed-toolkit_日期.tar.gz
+tar xzf feishu-ai-fde-toolkit_日期.tar.gz
 cd build_日期
 
 # 加载 Docker 镜像
@@ -252,7 +252,7 @@ A: 支持。SSE 流式，reasoning_content 放思考过程，content 放最终�
 姓名: 黄龙
 手机: 18907186930
 邮箱: kumcy@qq.com
-GitHub: github.com/damokuye-cmyk/feishu-ai-fed-toolkit
+GitHub: github.com/damokuye-cmyk/feishu-ai-fde-toolkit
 
 薪资目标: 总包 156~169 万 (20~30% 增幅)
 对标职级: 字节 2-2 (对应阿里 P8)

@@ -1,4 +1,4 @@
-# 🦞 Feishu AI FED Toolkit
+# 🦞 Feishu AI FDE Toolkit
 
 飞书 AI 现场交付工程师工具链 — Agent 开发 + 部署平台
 
